@@ -6,19 +6,15 @@ jobs:
   Riot-Games-Servers:
     runs-on: windows-2019
     steps:
-    - uses: actions/checkout@v2
-    - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1.1
-    - name: Build
-      shell: cmd
-      run: msbuild R3nzSkin/R3nzSkin.vcxproj /p:Platform=x86 /p:Configuration=RiotGamesServers
-      
-  China-Server:
-    runs-on: windows-2019
-    steps:
-    - uses: actions/checkout@v2
-    - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1.1
-    - name: Build
-      shell: cmd
-      run: msbuild R3nzSkin/R3nzSkin.vcxproj /p:Platform=x86 /p:Configuration=ChinaServer
+      - uses: actions/checkout@v2
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.1
+      - name: Build
+        shell: cmd
+        run: msbuild R3nzSkin/R3nzSkin.vcxproj -p:Instruction_Set=AdvancedVectorExtensions2 /p:Platform=x86 /p:Configuration=RiotGamesServers
+
+      - name: Upload To Artifact_Global
+        uses: actions/upload-artifact@main
+        with:
+          name: RiotGamesServers${{ github.job }}
+          path: R3nzSkin/Release/RiotGamesServers
