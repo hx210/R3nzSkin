@@ -112,6 +112,8 @@ void Memory::Search(bool gameClient) noexcept
 
 		for (const auto& sig : signatureToSearch)
 			*sig.offset = 0;
+		int Number_of_memory_queries;
+		Number_of_memory_queries = 0;
 
 		while (true) {
 			bool missing_offset{ false };
@@ -124,9 +126,15 @@ void Memory::Search(bool gameClient) noexcept
 					auto address{ find_signature(nullptr, pattern.c_str()) };
 
 					if (!address) {
-						// ::MessageBoxA(nullptr, ("Failed to find pattern: " + pattern).c_str(), "R3nzSkin", MB_OK | MB_ICONWARNING);
 						// TODO 使用日志方式记录信息 设置截至次数
+						if (Number_of_memory_queries >= 2)
+						{
+						::MessageBoxA(nullptr, ("Failed to find pattern: " + pattern).c_str(), "R3nzSkin", MB_OK | MB_ICONWARNING);
+						}
+						else{
+						Number_of_memory_queries++;
 						std::this_thread::sleep_for(500ms);
+						}
 						continue;
 					}
 
