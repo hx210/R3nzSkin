@@ -95,6 +95,11 @@ inline ImWchar* getFontGlyphRangesKr() noexcept
 	return rangesKR.Data;
 }
 
+inline bool files_exists(const std::string& name) {
+	struct stat buffer;
+	return (stat(name.c_str(), &buffer) == 0);
+}
+
 namespace d3d_vtable {
 	ID3D11Device* d3d11_device{ nullptr };
 	ID3D11DeviceContext* d3d11_device_context{ nullptr };
