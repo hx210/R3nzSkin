@@ -208,10 +208,15 @@ namespace d3d_vtable {
 			::CoTaskMemFree(pathToFonts);
 			ImFontConfig cfg;
 			cfg.SizePixels = 15.0f;
-			io.Fonts->AddFontFromFileTTF((path / "tahoma.ttf").string().c_str(), 15.0f, &cfg, ranges);
+			auto first_font {"JetBrainsMono-Regular.ttf"};
+			if (files_exists((path / first_font ).string().c_str()))
+				io.Fonts->AddFontFromFileTTF((path / first_font).string().c_str(), 15.0f, &cfg, io.Fonts->GetGlyphRangesDefault());
+			else
+				io.Fonts->AddFontFromFileTTF((path / "consola.ttf").string().c_str(), 15.0f, &cfg, io.Fonts->GetGlyphRangesDefault());
+
 			cfg.MergeMode = true;
-			io.Fonts->AddFontFromFileTTF((path / "malgun.ttf").string().c_str(), 16.0f, &cfg, getFontGlyphRangesKr());
-			io.Fonts->AddFontFromFileTTF((path / "simhei.ttf").string().c_str(), 12.0f, &cfg, io.Fonts->GetGlyphRangesChineseFull());
+			// io.Fonts->AddFontFromFileTTF((path / "malgun.ttf").string().c_str(), 16.0f, &cfg, io.Fonts->GetGlyphRangesKorean());
+			io.Fonts->AddFontFromFileTTF((path / "msyh.ttc").string().c_str(), 15.0f, &cfg, io.Fonts->GetGlyphRangesChineseFull());
 			cfg.MergeMode = false;
 		}
 
