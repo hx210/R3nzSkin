@@ -173,7 +173,7 @@ private:
 		},
 		{
 			{
-				"83 EC 10 56 E8 ? ? ? ? 8B 08",
+				"E8 ? ? ? ? 83 C4 08 83 F8 01 75 16",
 				"E8 ? ? ? ? 8D 44 24 10 50 8B 44 24 54"
 			}, true, false, 0, &offsets::functions::WorldToScreen
 		},
