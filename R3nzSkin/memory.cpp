@@ -120,7 +120,9 @@ void Memory::Search(bool gameClient) noexcept
 					auto address{ find_signature(nullptr, pattern.c_str()) };
 
 					if (!address) {
-						::MessageBoxA(nullptr, ("Failed to find pattern: " + pattern).c_str(), "R3nzSkin", MB_OK | MB_ICONWARNING);
+						// ::MessageBoxA(nullptr, ("Failed to find pattern: " + pattern).c_str(), "R3nzSkin", MB_OK | MB_ICONWARNING);
+						// TODO 使用日志方式记录信息 设置截至次数
+						std::this_thread::sleep_for(500ms);
 						continue;
 					}
 
