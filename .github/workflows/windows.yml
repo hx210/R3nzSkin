@@ -20,5 +20,5 @@ jobs:
       - name: Upload To Artifact_Global
         uses: actions/upload-artifact@main
         with:
-          name: RiotGamesServers${{ github.job }}-${{ matrix.configuration }}
+          name: RiotGamesServers${{ github.job }}-${{ matrix.os }}-${{ matrix.configuration }}
           path: R3nzSkin/Release/RiotGamesServers
