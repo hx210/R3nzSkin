@@ -2,7 +2,6 @@
 
 #include <cstdint>
 #include <map>
-#include <string_view>
 #include <utility>
 #include <vector>
 
@@ -19,25 +18,45 @@ public:
 
 	class jungle_mob_skin_info {
 	public:
-		std::string_view name;
+		const char* name;
 		std::vector<std::uint32_t> name_hashes;
-		std::vector<std::string_view> skins;
+		std::vector<const char*> skins;
+	};
+
+	class specialSkin {
+	public:
+		std::uint32_t champHash;
+		std::int32_t skinIdStart;
+		std::int32_t skinIdEnd;
+		std::vector<const char*> gears;
 	};
 
 	void load() noexcept;
 
 	std::map<std::uint32_t, std::vector<skin_info>> champions_skins;
-	std::vector<std::pair<std::uint32_t, std::string_view>> wards_skins;
-	std::vector<std::string_view> minions_skins =
-	{
+	std::vector<std::pair<std::uint32_t, const char*>> wards_skins;
+	
+	std::vector<const char*> minions_skins{
 		"Minion", "Summer Minion",
 		"Project Minion", "Snowdown Minion",
 		"Draven Minion", "Star Guardian Minion",
 		"Arcade Minion", "Snowdown 2 Minion",
 		"Odyssey Minion", "Mouse Minion", "Arcane Minion"
 	};
-	std::vector<jungle_mob_skin_info> jungle_mobs_skins =
-	{
+
+	std::vector<const char*> turret_skins{
+		"Default Order Turret", "Default Chaos Turret",
+		"Snow Order Turret", "Snow Chaos Turret",
+		"Twisted Treeline Order Turret", "Twisted Treeline Chaos Turret",
+		"URF Order Turret", "URF Chaos Turret",
+		"[Broken] Arcade Turret", // crash
+		"Temple of Lily and Lotus Turret",
+		"Arcane Order Turret", "Arcane Chaos Turret",
+		"Butcher's Bridge Order Turret", "Butcher's Bridge Chaos Turret",
+		"Howling Abyss Order Turret", "Howling Abyss Chaos Turret"
+	};
+
+	std::vector<jungle_mob_skin_info> jungle_mobs_skins{
 		{
 			"Baron",
 			{ FNV("SRU_Baron") },
@@ -68,5 +87,12 @@ public:
 			{ FNV("SRU_Razorbeak"), FNV("SRU_RazorbeakMini") },
 			{ "Razorbeak", "Chicken Razorbeak" }
 		}
+	};
+
+	std::vector<specialSkin> specialSkins{
+		{ FNV("Katarina"), 29, 36, { "Dagger 1", "Dagger 2", "Dagger 3", "Dagger 4", "Dagger 5", "Dagger 6" }},
+		{ FNV("Renekton"), 26, 32, { "Head off", "Head on", "Fins", "Ultimate" } },
+		{ FNV("MissFortune"), 16, 16, { "Scarlet fair", "Zero hour", "Royal arms", "Starswarm" } },
+		{ FNV("Ezreal"), 5, 5, { "Level 1", "Level 2", "Level 3" } }
 	};
 };
