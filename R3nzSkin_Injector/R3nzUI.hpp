@@ -71,7 +71,7 @@ namespace R3nzSkinInjector {
 #pragma region Windows Form Designer generated code
 		   void InitializeComponent(void)
 		   {
-			   System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(R3nzUI::typeid));
+			   auto resources = (gcnew System::ComponentModel::ComponentResourceManager(R3nzUI::typeid));
 			   this->button1 = (gcnew System::Windows::Forms::Button());
 			   this->label1 = (gcnew System::Windows::Forms::Label());
 			   this->label2 = (gcnew System::Windows::Forms::Label());
@@ -226,21 +226,21 @@ namespace R3nzSkinInjector {
 			   this->linkLabel1->Cursor = System::Windows::Forms::Cursors::Hand;
 			   this->linkLabel1->LinkBehavior = System::Windows::Forms::LinkBehavior::NeverUnderline;
 			   this->linkLabel1->LinkColor = System::Drawing::Color::Silver;
-			   this->linkLabel1->Location = System::Drawing::Point(34, 274);
+			   this->linkLabel1->Location = System::Drawing::Point(20, 274);
 			   this->linkLabel1->Name = L"linkLabel1";
 			   this->linkLabel1->Size = System::Drawing::Size(207, 14);
 			   this->linkLabel1->TabIndex = 11;
 			   this->linkLabel1->TabStop = true;
-			   this->linkLabel1->Text = L"Copyright (c) 2021 R3nzTheCodeGOD";
+			   this->linkLabel1->Text = L"Copyright (c) 2021-2022 R3nzTheCodeGOD";
 			   this->linkLabel1->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
 			   this->linkLabel1->LinkClicked += gcnew System::Windows::Forms::LinkLabelLinkClickedEventHandler(this, &R3nzUI::linkLabel1_LinkClicked);
 			   //
 			   // contextMenu
 			   //
-			   this->contextMenu->MenuItems->AddRange(gcnew array<System::Windows::Forms::MenuItem^>{ this->menuItem });
-			   this->contextMenu->MenuItems->AddRange(gcnew array<System::Windows::Forms::MenuItem^>{ this->menuItem2 });
+			   this->contextMenu->MenuItems->AddRange(gcnew array<System::Windows::Forms::MenuItem^>{ this->menuItem, this->menuItem2 });
 			   //
 			   // menuItem
+			   //
 			   this->menuItem2->Index = 0;
 			   this->menuItem2->Text = L"Start";
 			   this->menuItem2->Click += gcnew System::EventHandler(this, &R3nzUI::menuItem2_OnClick);
@@ -293,7 +293,16 @@ namespace R3nzSkinInjector {
 		   }
 #pragma endregion
 	private:
-		System::Void R3nzUI_Load(System::Object^ sender, System::EventArgs^ e) {}
+		System::Void R3nzUI_Load(System::Object^ sender, System::EventArgs^ e) 
+		{
+			System::AppDomain::CurrentDomain->UnhandledException += gcnew System::UnhandledExceptionEventHandler(this, &R3nzUI::R3nzUI_ExceptionHandler);
+		}
+	private:
+		System::Void R3nzUI_ExceptionHandler(System::Object^ sender, System::UnhandledExceptionEventArgs^ e)
+		{
+			const auto exception = dynamic_cast<System::Exception^>(e->ExceptionObject)->Message;
+			MessageBox::Show(exception);
+		}
 	private:
 		System::Void button1_Click(System::Object^ sender, System::EventArgs^ e)
 		{
