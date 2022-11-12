@@ -13,6 +13,7 @@
 #include "GUI.hpp"
 #include "Hooks.hpp"
 #include "Memory.hpp"
+#include "RetSpoofInvoker.hpp"
 
 #include "SDK/GameState.hpp"
 
@@ -32,7 +33,7 @@ bool WINAPI HideThread(const HANDLE hThread) noexcept
 	}
 }
 
-static void WINAPI DllAttach([[maybe_unused]] LPVOID lp) noexcept
+__declspec(safebuffers) static void WINAPI DllAttach([[maybe_unused]] LPVOID lp) noexcept
 {
 	using namespace std::chrono_literals;
 
@@ -44,11 +45,11 @@ static void WINAPI DllAttach([[maybe_unused]] LPVOID lp) noexcept
 		
 		if (!cheatManager.memory->client)
 			cheatManager.memory->Search(true);
-		else
-			if (cheatManager.memory->client->game_state == GGameState_s::Running)
+		if (cheatManager.memory->client->game_state == GGameState_s::Running)
 				break;
 	}
 
+	invoker.init(cheatManager.memory->base + offsets::global::retSpoofGadget);
 	std::this_thread::sleep_for(500ms);
 	cheatManager.memory->Search(false);
 	std::this_thread::sleep_for(500ms);
