@@ -6,6 +6,8 @@
 #include <d3d11.h>
 
 #include "Offsets.hpp"
+#include "RetSpoofInvoker.hpp"
+
 #include "SDK/AIBaseCommon.hpp"
 #include "SDK/AIHero.hpp"
 #include "SDK/AITurret.hpp"
@@ -25,9 +27,10 @@ public:
 
 class Memory {
 public:
-	void Search(bool gameClient = true) noexcept;
-	[[nodiscard]] inline auto getLeagueModule() const noexcept { return reinterpret_cast<std::uintptr_t>(::GetModuleHandle(nullptr)); }
-	[[nodiscard]] inline auto getRiotWindow() const noexcept { return *reinterpret_cast<HWND*>(this->getLeagueModule() + offsets::global::Riot__g_window); }
+	void Search(bool gameClient = true);
+
+	std::uintptr_t base;
+	HWND window;
 
 	GameClient* client;
 	AIBaseCommon* localPlayer;
@@ -35,13 +38,15 @@ public:
 	ManagerTemplate<AIMinionClient>* minionList;
 	ManagerTemplate<AITurret>* turretList;
 	ChampionManager* championManager;
+	
 	std::uintptr_t materialRegistry;
 	IDirect3DDevice9* d3dDevice;
 	IDXGISwapChain* swapChain;
 
-	using FnTranlateString = const char*(__cdecl*)(const char*);
-	
-	FnTranlateString translateString;
+	const char* translateString(const char* string) const noexcept
+	{
+		return invoker.invokeCdecl<const char*>(this->base + offsets::functions::translateString_UNSAFE_DONOTUSE, string);
+	}
 private:
 	void update(bool gameClient = true) noexcept;
 
@@ -52,6 +57,11 @@ private:
 				"A1 ? ? ? ? 68 ? ? ? ? 8B 70 08 E8 ? ? ? ?",
 				"A1 ? ? ? ? 56 83 78 08 00 75 ?"
 			}, true, true, 0, &offsets::global::GameClient
+		},
+		{
+			{
+				"FF 23 80 7A ? ? 75 ? 66 8B 9D ? ? ? ?"
+			}, true, false, 0, &offsets::global::retSpoofGadget
 		}
 	};
 

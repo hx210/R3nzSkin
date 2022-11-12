@@ -4,6 +4,6 @@
 
 class AIMinionClient : public AIBaseCommon {
 public:
-	[[nodiscard]] AIBaseCommon* get_gold_redirect_target() noexcept;
-	[[nodiscard]] bool is_lane_minion() noexcept;
+	[[nodiscard]] AIBaseCommon* getGoldRedirectTarget() const noexcept;
+	[[nodiscard]] bool isLaneMinion() const noexcept;
 };
