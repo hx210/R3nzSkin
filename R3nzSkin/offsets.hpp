@@ -4,6 +4,15 @@
 
 namespace offsets {
 	namespace GameObject {
+		namespace VTable {
+			enum {
+				IsLaneMinion = 0xD9,
+				IsEliteMinion = IsLaneMinion + 0x1,
+				IsEpicMinion = IsEliteMinion + 0x1,
+				IsMinion = IsEpicMinion + 0x4,
+				IsJungle = IsMinion + 0x1
+			};
+		};
 		enum {
 			Team = 0x34,
 			Name = 0x54
@@ -29,10 +38,6 @@ namespace offsets {
 	namespace MaterialRegistry {
 		inline std::uint32_t D3DDevice{ 0 };
 		inline std::uint32_t SwapChain{ 0 };
-	};
-
-	namespace AIMinionClient {
-		inline std::uint32_t IsLaneMinion{ 0 };
 	};
 
 	namespace functions {

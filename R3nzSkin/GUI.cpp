@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cstdio>
 #include <string>
 #include <vector>
 
@@ -21,7 +22,7 @@ inline static void footer() noexcept
 
 static void changeTurretSkin(const std::int32_t skinId, const std::int32_t team) noexcept
 {
-	if (skinId == -1 || skinId == 8) // ignore broken arcade turret skin
+	if (skinId == -1)
 		return;
 
 	const auto turrets{ cheatManager.memory->turretList };
@@ -143,7 +144,7 @@ void GUI::render() noexcept
 					auto& config_array{ is_enemy ? cheatManager.config->current_combo_enemy_skin_index : cheatManager.config->current_combo_ally_skin_index };
 					const auto config_entry{ config_array.insert({ champion_name_hash, 0 }) };
 
-					snprintf(this->str_buffer, sizeof(this->str_buffer), cheatManager.config->heroName ? "HeroName: [ %s ]##%X" : "PlayerName: [ %s ]##%X", cheatManager.config->heroName ? hero->get_character_data_stack()->base_skin.model.str : hero->get_name()->c_str(), reinterpret_cast<std::uintptr_t>(hero));
+					std::snprintf(this->str_buffer, sizeof(this->str_buffer), cheatManager.config->heroName ? "HeroName: [ %s ]##%X" : "PlayerName: [ %s ]##%X", cheatManager.config->heroName ? hero->get_character_data_stack()->base_skin.model.str : hero->get_name()->c_str(), reinterpret_cast<std::uintptr_t>(hero));
 
 					auto& values{ cheatManager.database->champions_skins[champion_name_hash] };
 					if (ImGui::Combo(str_buffer, &config_entry.first->second, vector_getter_skin, static_cast<void*>(&values), values.size() + 1))
@@ -166,13 +167,18 @@ void GUI::render() noexcept
 				ImGui::Separator();
 				ImGui::Text("Jungle Mobs Skins Settings:");
 				for (auto& it : cheatManager.database->jungle_mobs_skins) {
-					snprintf(str_buffer, 256, "Current %s skin", it.name);
+					std::snprintf(str_buffer, 256, "Current %s skin", it.name);
 					const auto config_entry{ cheatManager.config->current_combo_jungle_mob_skin_index.insert({ it.name_hashes.front(), 0 }) };
 					if (ImGui::Combo(str_buffer, &config_entry.first->second, vector_getter_default, static_cast<void*>(&it.skins), it.skins.size() + 1))
 						for (const auto& hash : it.name_hashes)
 							cheatManager.config->current_combo_jungle_mob_skin_index[hash] = config_entry.first->second;
 				}
 				footer();
+				ImGui::EndTabItem();
+			}
+
+			if (ImGui::BeginTabItem("Logger")) {
+				cheatManager.logger->draw();
 				ImGui::EndTabItem();
 			}
 
@@ -193,12 +199,7 @@ void GUI::render() noexcept
 				if (player)
 					ImGui::InputText("Change Nick", player->get_name());
 
-				if (ImGui::Button("No Skins")) {
-					if (player) {
-						cheatManager.config->current_combo_skin_index = 1;
-						player->change_skin(player->get_character_data_stack()->base_skin.model.str, 0);
-					}
-
+				if (ImGui::Button("No skins except local player")) {
 					for (auto& enemy : cheatManager.config->current_combo_enemy_skin_index)
 						enemy.second = 1;
 
@@ -207,20 +208,22 @@ void GUI::render() noexcept
 
 					for (auto i{ 0u }; i < heroes->length; ++i) {
 						const auto hero{ heroes->list[i] };
-						hero->change_skin(hero->get_character_data_stack()->base_skin.model.str, 0);
+						if (hero != player)
+							hero->change_skin(hero->get_character_data_stack()->base_skin.model.str, 0);
 					}
-				} ImGui::hoverInfo("Defaults the skin of all champions.");
+				} ImGui::hoverInfo("Sets the skins of all champions except the local player to the default skin.");
 
 				if (ImGui::Button("Random Skins")) {
 					for (auto i{ 0u }; i < heroes->length; ++i) {
 						const auto hero{ heroes->list[i] };
 						const auto championHash{ fnv::hash_runtime(hero->get_character_data_stack()->base_skin.model.str) };
+						
+						if (championHash == FNV("PracticeTool_TargetDummy"))
+							continue;
+						
 						const auto skinCount{ cheatManager.database->champions_skins[championHash].size() };
 						auto& skinDatabase{ cheatManager.database->champions_skins[championHash] };
 						auto& config{ (hero->get_team() != my_team) ? cheatManager.config->current_combo_enemy_skin_index : cheatManager.config->current_combo_ally_skin_index };
-
-						if (championHash == FNV("PracticeTool_TargetDummy"))
-							continue;
 
 						if (hero == player) {
 							cheatManager.config->current_combo_skin_index = random(1u, skinCount);
