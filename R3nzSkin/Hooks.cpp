@@ -1,3 +1,5 @@
+#pragma warning(disable : 6011)
+
 #include <Windows.h>
 #include <ShlObj.h>
 #include <cinttypes>
@@ -19,10 +21,30 @@
 
 LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
+static inline void testFunc() noexcept
+{
+	// The codes you write here are executed when you press the F7 key in the game.
+	
+	// Example Func
+	const auto minions{ cheatManager.memory->minionList };
+	for (auto i{ 0u }; i < minions->length; ++i) {
+		const auto minion{ minions->list[i] };
+		const auto owner{ minion->getGoldRedirectTarget() };
+		cheatManager.logger->addLog("Minion: %s\n\tModelName: %s\n\t", minion->get_name()->c_str(), minion->get_character_data_stack()->base_skin.model.str);
+		if (owner)
+			cheatManager.logger->addLog("OwnerName: %s\n\t\tModelName: %s\n\t", owner->get_name()->c_str(), owner->get_character_data_stack()->base_skin.model.str);
+		cheatManager.logger->addLog("IsLaneMinion: %d\n\t", minion->isLaneMinion());
+		cheatManager.logger->addLog("IsEliteMinion: %d\n\t", minion->isEliteMinion());
+		cheatManager.logger->addLog("IsEpicMinion: %d\n\t", minion->isEpicMinion());
+		cheatManager.logger->addLog("IsMinion: %d\n\t", minion->isMinion());
+		cheatManager.logger->addLog("IsJungle: %d\n\n", minion->isJungle());
+	}
+}
+
 static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
-	if (cheatManager.gui->is_open)
-		ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam);
+	if (ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam))
+		return true;
 
 	if (msg == WM_KEYDOWN) {
 		if (wParam == cheatManager.config->menuKey.getKey()) {
@@ -67,6 +89,8 @@ static LRESULT WINAPI wndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lPara
 					cheatManager.config->current_combo_skin_index = 1;
 				cheatManager.config->save();
 			}
+		} else if (wParam == VK_F7) {
+			testFunc();
 		}
 	}
 
@@ -131,6 +155,7 @@ namespace d3d_vtable {
 	static void init_imgui(void* device, bool is_d3d11 = false) noexcept
 	{
 		cheatManager.database->load();
+		cheatManager.logger->addLog("All skins loaded from memory!\n");
 		ImGui::CreateContext();
 		auto& style{ ImGui::GetStyle() };
 
@@ -228,6 +253,7 @@ namespace d3d_vtable {
 			// io.Fonts->AddFontFromFileTTF((path / "malgun.ttf").string().c_str(), 16.0f, &cfg, io.Fonts->GetGlyphRangesKorean());
 			io.Fonts->AddFontFromFileTTF((path / "msyh.ttc").string().c_str(), 15.0f, &cfg, io.Fonts->GetGlyphRangesChineseFull());
 			cfg.MergeMode = false;
+			cheatManager.logger->addLog("Fonts loaded!\n");
 		}
 
 		ImGui_ImplWin32_Init(cheatManager.memory->window);
@@ -243,6 +269,7 @@ namespace d3d_vtable {
 			::ImGui_ImplDX9_Init(reinterpret_cast<IDirect3DDevice9*>(device));
 
 		originalWndProc = WNDPROC(::SetWindowLongW(cheatManager.memory->window, GWLP_WNDPROC, LONG_PTR(&wndProc)));
+		cheatManager.logger->addLog("WndProc hooked!\n\tOriginal: 0x%X\n\tNew: 0x%X\n", &originalWndProc, &wndProc);
 	}
 
 	static void render(void* device, bool is_d3d11 = false) noexcept
@@ -327,7 +354,30 @@ namespace d3d_vtable {
 	decltype(reset::m_original) reset::m_original;
 };
 
-void Hooks::init() const noexcept
+static void changeModelForObject(const AIBaseCommon* obj, const char* model, const std::int32_t skin) noexcept
+{
+	if (skin == -1)
+		return;
+
+	if (const auto stack{ obj->get_character_data_stack() }; stack->base_skin.skin != skin) {
+		stack->base_skin.skin = skin;
+		stack->stack.clear();
+		stack->push(model, skin);
+	}
+}
+
+static void changeSkinForObject(const AIBaseCommon* obj, const std::int32_t skin) noexcept
+{
+	if (skin == -1)
+		return;
+
+	if (const auto stack{ obj->get_character_data_stack() }; stack->base_skin.skin != skin) {
+		stack->base_skin.skin = skin;
+		stack->update(true);
+	}
+}
+
+void Hooks::init() noexcept
 {
 	const auto player{ cheatManager.memory->localPlayer };
 	const auto heroes{ cheatManager.memory->heroList };
@@ -378,92 +428,61 @@ void Hooks::init() const noexcept
 		}
 	}
 
-	static const auto change_model_for_object = [](AIBaseCommon* obj, const char* model, const std::int32_t skin) noexcept -> void {
-		if (skin == -1)
-			return;
-
-		if (const auto stack{ obj->get_character_data_stack() }; stack->base_skin.skin != skin) {
-			stack->base_skin.skin = skin;
-			stack->stack.clear();
-			stack->push(model, skin);
-		}
-	};
-
-	static const auto change_skin_for_object = [](AIBaseCommon* obj, const std::int32_t skin) noexcept -> void {
-		if (skin == -1)
-			return;
-		
-		if (const auto stack{ obj->get_character_data_stack() }; stack->base_skin.skin != skin) {
-			stack->base_skin.skin = skin;
-			stack->update(true);
-		}
-	};
-
 	for (auto i{ 0u }; i < minions->length; ++i) {
 		const auto minion{ minions->list[i] };
-		const auto owner{ minion->getGoldRedirectTarget() };
+
+		if (minion->isLaneMinion()) {
+			if (player && player->get_team() == 200)
+				changeSkinForObject(minion, cheatManager.config->current_minion_skin_index * 2 + 1);
+			else
+				changeSkinForObject(minion, cheatManager.config->current_minion_skin_index * 2);
+			continue;
+		}
+
 		const auto hash{ fnv::hash_runtime(minion->get_character_data_stack()->base_skin.model.str) };
 
-		// TODO: if the selected tower model has a shield, replace it
-		// if (hash == FNV("PreSeason_Turret_Shield")) {}
-
-		if (owner) {
-			if (hash == FNV("JammerDevice") ||
-				hash == FNV("SightWard") ||
-				hash == FNV("YellowTrinket") ||
-				hash == FNV("VisionWard") ||
-				hash == FNV("TestCubeRender10Vision"))
-			{
+		if (const auto owner{ minion->getGoldRedirectTarget() }; owner) {
+			if (hash == FNV("JammerDevice") || hash == FNV("SightWard") || hash == FNV("YellowTrinket") || hash == FNV("VisionWard") || hash == FNV("BlueTrinket") || hash == FNV("TestCubeRender10Vision")) {
 				if (!player || owner == player) {
 					if (hash == FNV("TestCubeRender10Vision") && playerHash == FNV("Yone"))
-						change_model_for_object(minion, "Yone", owner->get_character_data_stack()->base_skin.skin);
+						changeModelForObject(minion, "Yone", owner->get_character_data_stack()->base_skin.skin);
 					else if (hash == FNV("TestCubeRender10Vision"))
-						change_skin_for_object(minion, 0);
+						changeSkinForObject(minion, 0);
 					else
-						change_skin_for_object(minion, cheatManager.config->current_ward_skin_index);
+						changeSkinForObject(minion, cheatManager.config->current_ward_skin_index);
 				}
-				continue;
-			} else if (hash == FNV("DominationScout")) continue;
-			change_skin_for_object(minion, owner->get_character_data_stack()->base_skin.skin);
-		} else {
-			// Just LocalPlayer
-			if ((hash == FNV("NunuSnowball") && playerHash == FNV("Nunu")) ||
-				(hash == FNV("KindredWolf") && playerHash == FNV("Kindred")) ||
-				(hash == FNV("QuinnValor") && playerHash == FNV("Quinn")))
-			{
-				change_skin_for_object(minion, player->get_character_data_stack()->base_skin.skin);
-				continue;
-			}
-
-			if (minion->isLaneMinion()) {
-				if (player && player->get_team() == 200)
-					change_skin_for_object(minion, cheatManager.config->current_minion_skin_index * 2 + 1);
-				else
-					change_skin_for_object(minion, cheatManager.config->current_minion_skin_index * 2);
-			} else {
-				const auto config_entry{ cheatManager.config->current_combo_jungle_mob_skin_index.find(fnv::hash_runtime(minion->get_character_data_stack()->base_skin.model.str)) };
-				if (config_entry == cheatManager.config->current_combo_jungle_mob_skin_index.end() || config_entry->second == 0)
-					continue;
-				change_skin_for_object(minion, config_entry->second - 1);
-			}
+			} else if (hash != FNV("SRU_Jungle_Companions") && hash != FNV("DominationScout"))
+				changeSkinForObject(minion, owner->get_character_data_stack()->base_skin.skin);
+			continue;
 		}
+
+		if (const auto config_entry{ cheatManager.config->current_combo_jungle_mob_skin_index.find(hash) }; config_entry != cheatManager.config->current_combo_jungle_mob_skin_index.end() && config_entry->second != 0) {
+			changeSkinForObject(minion, config_entry->second - 1);
+			continue;
+		}
+
+		// Just LocalPlayer
+		if ((hash == FNV("NunuSnowball") && playerHash == FNV("Nunu")) || (hash == FNV("KindredWolf") && playerHash == FNV("Kindred")) || (hash == FNV("QuinnValor") && playerHash == FNV("Quinn")))
+			changeSkinForObject(minion, player->get_character_data_stack()->base_skin.skin);
 	}
 }
 
-void Hooks::install() const noexcept
+void Hooks::install() noexcept
 {
 	if (cheatManager.memory->d3dDevice) {
 		d3d_device_vmt = std::make_unique<::vmt_smart_hook>(cheatManager.memory->d3dDevice);
 		d3d_device_vmt->apply_hook<d3d_vtable::end_scene>(42);
 		d3d_device_vmt->apply_hook<d3d_vtable::reset>(16);
+		cheatManager.logger->addLog("DX9 Hooked!\n");
 	} else if (cheatManager.memory->swapChain) {
 		swap_chain_vmt = std::make_unique<::vmt_smart_hook>(cheatManager.memory->swapChain);
 		swap_chain_vmt->apply_hook<d3d_vtable::dxgi_present>(8);
 		swap_chain_vmt->apply_hook<d3d_vtable::dxgi_resize_buffers>(13);
+		cheatManager.logger->addLog("DX11 Hooked!\n");
 	}
 }
 
-void Hooks::uninstall() const noexcept
+void Hooks::uninstall() noexcept
 {
 	::SetWindowLongW(cheatManager.memory->window, GWLP_WNDPROC, LONG_PTR(originalWndProc));
 
