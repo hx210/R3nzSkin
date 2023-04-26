@@ -12,7 +12,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v1.1
+        uses: microsoft/setup-msbuild@v1.3.1
+        with:
+          msbuild-architecture: x64
+
       - name: Build
         shell: cmd
         run: msbuild R3nzSkin/R3nzSkin.vcxproj -p:Instruction_Set=AdvancedVectorExtensions2 /p:Platform=x64 /p:Configuration=${{ matrix.configuration }}
@@ -20,5 +23,5 @@ jobs:
       - name: Upload To Artifact_Global
         uses: actions/upload-artifact@main
         with:
-          name: RiotGamesServers${{ github.job }}-${{ matrix.os }}-${{ matrix.configuration }}
-          path: R3nzSkin/Release/RiotGamesServers
+          name: ${{ github.job }}-${{ matrix.os }}-${{ matrix.configuration }}
+          path: R3nzSkin/x64/RiotGamesServers
