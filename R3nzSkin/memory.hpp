@@ -67,7 +67,7 @@ private:
 		},
 		{
 			{
-				"48 8B 05 ? ? ? ? 45 33 E4 0F 57 C0"
+				"48 8B 05 ? ? ? ? 48 8B 78 08 8B 40 10 4C 8D 3C C7 49 3B FF"
 			}, true, false, true, 0, &offsets::global::ManagerTemplate_AIHero_
 		},
 		{
@@ -102,7 +102,7 @@ private:
 		},
 		{
 			{
-				"48 8D 8D ? ? ? ? 48 03 CB E8"
+				"48 8B 8F ? ? 00 00 45 33 C0 8B D3 48 8B 01 FF 90 ? ? 00 00"
 			}, false, true, false, 0, &offsets::MaterialRegistry::D3DDevice
 		},
 		{
@@ -112,7 +112,7 @@ private:
 		},
 		{
 			{
-				"E8 ? ? ? ? 48 8D 8D B0 11 00 00 E8 ? ? ? ? 48 85 C0"
+				"E8 ? ? ? ? 48 8D 8D ? ? ? ? E8 ? ? ? ? 48 85 C0"
 			}, true, false, false, 0, &offsets::functions::CharacterDataStack__Push
 		},
 		{

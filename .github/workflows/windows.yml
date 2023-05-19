@@ -7,10 +7,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-2019, windows-2022]
+        os: [windows-2022]
         configuration: [RiotGamesServers]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.3.1
         with:
@@ -24,4 +24,4 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: ${{ github.job }}-${{ matrix.os }}-${{ matrix.configuration }}
-          path: R3nzSkin/x64/RiotGamesServers
+          path: R3nzSkin/Release/RiotGamesServers
