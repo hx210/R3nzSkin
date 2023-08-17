@@ -18,7 +18,7 @@ using namespace System::Threading;
 using namespace System::Globalization;
 using namespace System::Net;
 
-proclist_t WINAPI Injector::findProcesses(const std::wstring name) noexcept
+proclist_t WINAPI Injector::findProcesses(const std::wstring& name) noexcept
 {
 	auto process_snap{ LI_FN(CreateToolhelp32Snapshot)(TH32CS_SNAPPROCESS, 0) };
 	proclist_t list;
@@ -47,7 +47,7 @@ bool WINAPI Injector::isInjected(const std::uint32_t pid) noexcept
 {
 	auto hProcess{ LI_FN(OpenProcess)(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pid) };
 
-	if (NULL == hProcess)
+	if (nullptr == hProcess)
 		return false;
 
 	HMODULE hMods[1024];
@@ -91,7 +91,7 @@ bool WINAPI Injector::inject(const std::uint32_t pid) noexcept
 
 	const auto dll_path{ std::wstring(current_dir) + L"\\R3nzSkin.dll" };
 
-	if (auto f{ std::ifstream(dll_path) }; !f.is_open()) {
+	if (const auto f{ std::ifstream(dll_path) }; !f.is_open()) {
 		LI_FN(MessageBoxW)(nullptr, L"R3nzSkin.dll file could not be found.\nTry reinstalling the cheat.", L"R3nzSkin", MB_ICONERROR | MB_OK);
 		LI_FN(CloseHandle)(handle);
 		return false;
@@ -111,7 +111,7 @@ bool WINAPI Injector::inject(const std::uint32_t pid) noexcept
 	}
 
 	HANDLE thread{};
-	LI_FN(NtCreateThreadEx).nt_cached()(&thread, GENERIC_ALL, NULL, handle, reinterpret_cast<LPTHREAD_START_ROUTINE>(LI_FN(GetProcAddress).get()(LI_FN(GetModuleHandleW).get()(L"kernel32.dll"), "LoadLibraryW")), dll_path_remote, FALSE, NULL, NULL, NULL, NULL);
+	LI_FN(NtCreateThreadEx).nt_cached()(&thread, GENERIC_ALL, nullptr, handle, reinterpret_cast<LPTHREAD_START_ROUTINE>(LI_FN(GetProcAddress).get()(LI_FN(GetModuleHandleW).get()(L"kernel32.dll"), "LoadLibraryW")), dll_path_remote, FALSE, NULL, NULL, NULL, NULL);
 
 	if (!thread || thread == INVALID_HANDLE_VALUE) {
 		LI_FN(VirtualFreeEx).get()(handle, dll_path_remote, 0u, MEM_RELEASE);
@@ -131,53 +131,46 @@ void WINAPI Injector::enableDebugPrivilege() noexcept
 	HANDLE token{};
 	if (OpenProcessToken(LI_FN(GetCurrentProcess).get()(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &token)) {
 		LUID value;
-		if (LookupPrivilegeValueW(NULL, SE_DEBUG_NAME, &value)) {
+		if (LookupPrivilegeValueW(nullptr, SE_DEBUG_NAME, &value)) {
 			TOKEN_PRIVILEGES tp{};
 			tp.PrivilegeCount = 1;
 			tp.Privileges[0].Luid = value;
 			tp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
-			if (AdjustTokenPrivileges(token, FALSE, &tp, sizeof(tp), NULL, NULL))
+			if (AdjustTokenPrivileges(token, FALSE, &tp, sizeof(tp), nullptr, nullptr))
 				LI_FN(CloseHandle)(token);
 		}
 	}
 }
 
-std::string Injector::randomString(std::uint32_t size) noexcept
-{
-	static auto& alphanum = "_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-	std::string tmp_s;
-	tmp_s.reserve(size);
-
-	while(size--)
-		tmp_s += alphanum[std::rand() % (sizeof(alphanum) - 1)];
-
-	return tmp_s;
-}
-
 void Injector::autoUpdate()
 {
-	WebClient^ client = gcnew WebClient();
+	auto client = gcnew WebClient();
+	ServicePointManager::Expect100Continue = true;
+	ServicePointManager::SecurityProtocol = SecurityProtocolType::Tls12;
 	client->Headers->Add(L"User-Agent", L"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0");
 
 	try
 	{
-		std::string json = msclr::interop::marshal_as<std::string>(client->DownloadString(L"https://api.github.com/repos/R3nzTheCodeGOD/R3nzSkin/releases/latest"));
+		auto json = msclr::interop::marshal_as<std::string>(client->DownloadString(L"https://api.github.com/repos/R3nzTheCodeGOD/R3nzSkin/releases/latest"));
 		std::regex tagnameRegex("\"tag_name\"\\s*:\\s*\"([^\"]+)");
 		std::regex urlRegex("\"browser_download_url\"\\s*:\\s*\"([^\"]+)");
 		std::regex dateRegex("\"created_at\"\\s*:\\s*\"([^\"]+)");
 
-		std::smatch tagnameMatch, urlMatch, dateMatch;
-		if (std::regex_search(json, tagnameMatch, tagnameRegex))
+		if (std::smatch tagnameMatch; std::regex_search(json, tagnameMatch, tagnameRegex))
 		{
 			auto version = gcnew String(tagnameMatch[1].str().c_str());
-			if (std::regex_search(json, dateMatch, dateRegex))
+			if (std::smatch dateMatch; std::regex_search(json, dateMatch, dateRegex))
 			{
+				if (!System::IO::File::Exists(L"R3nzSkin.dll"))
+				{
+					throw gcnew Exception(L"Failed to find R3nzSkin.dll in the current directory");
+				}
 				auto date_of_github_release = DateTime::ParseExact(gcnew String(dateMatch[1].str().c_str()), L"yyyy-MM-ddTHH:mm:ssZ", CultureInfo::InvariantCulture).ToString(L"dd.MM.yyyy HH:00");
 				auto date_of_current_release = System::IO::File::GetLastWriteTime(L"R3nzSkin.dll").ToString(L"dd.MM.yyyy HH:00");
 				if (date_of_current_release != date_of_github_release)
 				{
-					auto date_of_github_release_class = DateTime::Parse(date_of_github_release);
-					auto date_of_current_release_class = DateTime::Parse(date_of_current_release);
+					auto date_of_github_release_class = DateTime::ParseExact(date_of_github_release, L"dd.MM.yyyy HH:00", CultureInfo::InvariantCulture);
+					auto date_of_current_release_class = DateTime::ParseExact(date_of_current_release, L"dd.MM.yyyy HH:00", CultureInfo::InvariantCulture);
 					if (date_of_current_release_class > date_of_github_release_class)
 					{
 						return;
@@ -186,7 +179,7 @@ void Injector::autoUpdate()
 					auto result = MessageBox::Show(L"New version is available on GitHub\nWould you like to download it now?", L"R3nzSkin", MessageBoxButtons::YesNo, MessageBoxIcon::Information);
 					if (result == DialogResult::Yes)
 					{
-						if (std::regex_search(json, urlMatch, urlRegex))
+						if (std::smatch urlMatch; std::regex_search(json, urlMatch, urlRegex))
 						{
 							auto url = gcnew String(urlMatch[1].str().c_str());
 							auto file = String::Format(L"R3nzSkin_{0}.zip", version);
@@ -216,20 +209,9 @@ void Injector::autoUpdate()
 	}
 	catch (Exception^ e)
 	{
-		MessageBox::Show(e->Message, L"R3nzSkin", MessageBoxButtons::OK, MessageBoxIcon::Error);
+		MessageBox::Show(String::Format(L"{0} - {1}", e->Message, e->StackTrace->Substring(5)), L"R3nzSkin", MessageBoxButtons::OK, MessageBoxIcon::Error);
+		Environment::Exit(0);
 	}
-}
-
-void Injector::renameExe() noexcept
-{
-	char szExeFileName[MAX_PATH];
-	LI_FN(GetModuleFileNameA)(nullptr, szExeFileName, MAX_PATH);
-
-	const auto path{ std::string(szExeFileName) };
-	const auto exe{ path.substr(path.find_last_of("\\") + 1, path.size()) };
-	const auto newName{ randomString(std::rand() % (10 - 7 + 1) + 7) + ".exe" };
-
-	std::rename(exe.c_str(), newName.c_str());
 }
 
 void Injector::run() noexcept
