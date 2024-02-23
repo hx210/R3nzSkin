@@ -16,6 +16,15 @@ jobs:
         with:
           msbuild-architecture: x64
 
+      - name: 切换依赖库
+        shell: bash
+        run: |
+          git clone --depth=1 https://github.com/ocornut/imgui -b v1.88
+          mv -f imgui/backends/* imgui/
+          mv -f imgui/* R3nzSkin/imgui/
+          sed -i '2i #define IMGUI_DEFINE_MATH_OPERATORS' R3nzSkin/imgui/imgui.h
+          git status
+
       - name: Build
         shell: cmd
         run: msbuild R3nzSkin/R3nzSkin.vcxproj -p:Instruction_Set=AdvancedVectorExtensions2 /p:Platform=x64 /p:Configuration=${{ matrix.configuration }}
