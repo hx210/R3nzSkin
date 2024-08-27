@@ -284,6 +284,7 @@ namespace d3d_vtable {
 		}
 	}
 
+
 	struct dxgi_present {
 		static long WINAPI hooked(IDXGISwapChain* p_swap_chain, UINT sync_interval, UINT flags) noexcept
 		{
