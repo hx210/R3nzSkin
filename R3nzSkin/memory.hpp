@@ -115,7 +115,7 @@ private:
 		},
 		{
 			{
-				"E8 ? ? ? ? 8B 57 44"
+				"E8 ? ? ? ? 8B 57 34"
 			}, true, false, false, 0, &offsets::functions::Riot__Renderer__MaterialRegistry__GetSingletonPtr
 		},
 		{
@@ -125,7 +125,7 @@ private:
 		},
 		{
 			{
-				"E8 ? ? ? ? 4C 3B F0 0F 94 C0"
+				"E8 ? ? ? ? 4C 3B ? 0F 94 C0"
 			}, true, false, false, 0, &offsets::functions::GetGoldRedirectTarget
 		}
 	};
