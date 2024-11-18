@@ -26,7 +26,7 @@
 - 每次发布的一些说明我都写在[Releases](https://github.com/hydy100/R3nzSkin/releases/latest)的描述里。
 - **我几乎没在其他任何平台发过此项目，所以如果你转发了，请同时帮忙解决一些问题，而不是让他们都找到我，或者提供[此项目的地址](https://github.com/hydy100/R3nzSkin)，让他提issues**。
 - **没有付费版或者其他版本，没有强制加群，只不过是留了个联系方式，所有的文件我都发布了**。
-- 项目目前纯公益，像原来的[R3](https://github.com/R3nzTheCodeGOD/R3nzSkin)一样，我没有通过这个项目赚过钱。
+- 项目目前纯公益，像原来的[R3](https://github.com/R3nzTheCodeGOD/R3nzSkin)一样。
 - 有些问题我无法很好地解决，所以如果你愿意，我欢迎任何有能力帮助解决这些问题的人。
 
 # 进一步优化

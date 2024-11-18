@@ -26,7 +26,7 @@
 - I include some explanations for each release in the description of [Releases](https://github.com/hydy100/R3nzSkin/releases/latest).
 - **I've hardly posted this project on any other platform, so if you share it, please help solve some issues rather than redirecting everything to me. Alternatively, provide [R3nzSkin](https://github.com/hydy100/R3nzSkin) so they can submit issues there.**
 - **There is no paid version or any other versions, and there is no requirement to join any groups. I've released all the files, I just left a contact method.**
-- The project is currently purely non-profit, just like the original [R3nzSkin](https://github.com/R3nzTheCodeGOD/R3nzSkin). I haven't made any money from it
+- The project is currently purely non-profit, just like the original [R3nzSkin](https://github.com/R3nzTheCodeGOD/R3nzSkin).
 - There are some issues I can't solve very well, so I welcome anyone with the ability to help resolve them, if you're willing.
 
 # Further optimizations
