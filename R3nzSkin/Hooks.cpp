@@ -347,7 +347,7 @@ void Hooks::init() noexcept
 			}
 		}
 
-		const auto my_team{ player ? player->get_team() : 100 };
+		const auto my_team{ player ? player->get_team() : 1 };
 		for (auto i{ 0u }; i < heroes->length; ++i) {
 			const auto hero{ heroes->list[i] };
 			if (hero == player)
@@ -387,7 +387,7 @@ void Hooks::init() noexcept
 		const auto minion{ minions->list[i] };
 
 		if (minion->isLaneMinion() && cheatManager.config->current_minion_skin_index != -1) {
-			if (player && player->get_team() == 200)
+			if (player && player->get_team() == 2)
 				changeSkinForObject(minion, cheatManager.config->current_minion_skin_index * 2 + 1);
 			else
 				changeSkinForObject(minion, cheatManager.config->current_minion_skin_index * 2);
