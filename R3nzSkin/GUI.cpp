@@ -189,10 +189,10 @@ void GUI::render() noexcept
 				}
 				if (ImGui::Combo("Chaos Turret Skins:", &cheatManager.config->current_combo_chaos_turret_index, vector_getter_default, static_cast<void*>(&cheatManager.database->turret_skins), cheatManager.database->turret_skins.size() + 1)) 
 				{
-					if (cheatManager.config->current_combo_order_turret_index >= 17)
-						changeTurretSkin(cheatManager.config->current_combo_order_turret_index + 1, 2);
+					if (cheatManager.config->current_combo_chaos_turret_index >= 17)
+						changeTurretSkin(cheatManager.config->current_combo_chaos_turret_index + 1, 2);
 					else
-						changeTurretSkin(cheatManager.config->current_combo_order_turret_index - 1, 2);
+						changeTurretSkin(cheatManager.config->current_combo_chaos_turret_index - 1, 2);
 				}
 				ImGui::Separator();
 				ImGui::Text("Jungle Mobs Skins Settings:");
