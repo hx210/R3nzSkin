@@ -10,7 +10,7 @@
 
 1. 通过输入命令： `git clone --recursive https://github.com/hydy100/R3nzSkin.git`或者直接下载下载 [R3nzSkin](https://github.com/hydy100/R3nzSkin/archive/refs/heads/main.zip)到本地
 
-   - **如果你不修改这个源代码，在中国服务器上编译和使用它肯定会导致禁令。但如果你知道如何修改它，你可以让它和我发布的版本一样安全。**
+   - **如果你不修改这个源代码，在中国服务器上编译和使用它肯定会导致禁令。**
 
 2. 在Visual Studio 2019/2022中构建，配置为 "你所在的地区  x64"。
 
