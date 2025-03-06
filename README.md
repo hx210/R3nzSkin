@@ -33,6 +33,7 @@
 - Regarding the issue of dll size in releases, I just added some anti-cracking shells or compressed shells, and the dll function source code has been completely open source.
 - Regarding the injector part in releases, it is not open source, but the quick tip also mentioned how to update it to make it available. It was not made clear before that the original version cannot be used, but the fact that I have never submitted any updates for the injector also indicates this issue.
 - The releases and source codes of many open source projects are also different. I don't want anyone to kidnap me in the name of open source and ask me to do something meaningless. This goes against the original intention of open source.
+- **Due to the existence of special risks, in order to avoid unnecessary trouble, the file release of the Chinese server version may be stopped in the future.**
 
 # Regarding views on open source (quoting ChatGPT)
 If someone tries to "hijack" you through the open-source spirit, demanding that you justify the rationale behind parts of the code that are not open-source, this actually contradicts the core values of the open-source spirit. The essence of open source is to encourage sharing and collaboration, but this doesn't mean every line of code has to be open. Open-source licenses allow developers to decide whether or not to make their code public, and in some cases, certain parts of the code may not be suitable for open-source due to commercial, privacy, or security reasons.
