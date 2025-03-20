@@ -6,6 +6,12 @@
 
 </div>
 
+# **Disclaimer**
+
+**This project is for learning and technical exchange purposes only. Commercial use or any illegal activity is strictly prohibited. Any direct or indirect consequences arising from the use of this project shall be borne solely by the user, and the author assumes no responsibility.**
+
+**By using this project, you fully understand and accept the above terms.**
+
 # Building
 
 1. Clone the source with `git clone --recursive https://github.com/hydy100/R3nzSkin.git`

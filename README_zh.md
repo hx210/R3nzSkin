@@ -6,6 +6,12 @@
 
 </div>
 
+# 声明
+
+**本项目仅供学习和技术交流之用，禁止用于任何商业用途或违法行为。因使用本项目而引发的任何直接或间接后果，均由使用者自行承担，作者不承担任何责任。**
+
+**使用本项目即表示您已充分理解并接受上述条款。**
+
 # 编译
 
 1. 通过输入命令： `git clone --recursive https://github.com/hydy100/R3nzSkin.git`或者直接下载下载 [R3nzSkin](https://github.com/hydy100/R3nzSkin/archive/refs/heads/main.zip)到本地
