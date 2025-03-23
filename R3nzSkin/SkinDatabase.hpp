@@ -54,7 +54,8 @@ public:
 		"Arcane Order Turret", "Arcane Chaos Turret",
 		"Butcher's Bridge Order Turret", "Butcher's Bridge Chaos Turret",
 		"Howling Abyss Order Turret", "Howling Abyss Chaos Turret",
-		"Zaun Order Turret","Piltover Chaos Turret"
+		"Zaun Order Turret","Piltover Chaos Turret",
+		"Black Rose Turret"
 	};
 
 	std::vector<jungle_mob_skin_info> jungle_mobs_skins{
