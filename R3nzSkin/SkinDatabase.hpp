@@ -98,6 +98,7 @@ public:
 		{ FNV("Ezreal"), 5, 5, { "Level 1", "Level 2", "Level 3" } },
 		{ FNV("Ahri"), 86, 86, { "Level 1", "Level 2", "Level 3" } },
 		{ FNV("Jinx"), 60, 60, { "With hood", "Parallel world", "Without hood" } },
-		{ FNV("Sett"), 66, 66, { "Blue", "Gold", "Red" } }
+		{ FNV("Sett"), 66, 66, { "Blue", "Gold", "Red" } },
+		{ FNV("Mordekaiser"), 54, 54, { "Sahn-Uzal", "Unconquered King", "Iron Revenant" } }
 	};
 };
