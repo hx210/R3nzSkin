@@ -51,7 +51,7 @@ private:
 	{
 		{
 			{
-				"48 8B 05 ? ? ? ? 4C 8B FA 83 78"
+				"48 8B 05 ? ? ? ? 48 8B F2 83 78"
 			}, true, false, true, 0, &offsets::global::GameClient
 		}
 	};
@@ -80,7 +80,7 @@ private:
 		},
 		{
 			{
-				"48 8B 1D ? ? ? ? 48 8B 5B 28 48 85 DB"
+				"48 8B 05 ? ? ? ? 48 8B 70 28 48 85 F6 74"
 			}, true, false, true, 0, &offsets::global::ManagerTemplate_AITurret_
 		},
 		{
@@ -95,7 +95,7 @@ private:
 		},
 		{
 			{
-				"88 87 ? ? 00 00 48 89 44 24 38 0F B6 44 24 39 88 87 ? 13"
+				"88 87 ? ? 00 00 48 89 45 87 0F B6 45 88 88 87 ? 13"
 			}, false, true, false, 0, &offsets::AIBaseCommon::SkinId
 		},
 		{
