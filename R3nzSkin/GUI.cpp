@@ -214,6 +214,8 @@ void GUI::render() noexcept
 
 			if (ImGui::BeginTabItem("Extras")) {
 				ImGui::hotkey("Menu Key", cheatManager.config->menuKey);
+				ImGui::Checkbox("Auto Show Menu", &cheatManager.config->isOpen);
+				ImGui::hoverInfo("Automatically open the menu after entering the game.");
 				ImGui::Checkbox(cheatManager.config->heroName ? "HeroName based" : "PlayerName based", &cheatManager.config->heroName);
 				ImGui::Checkbox("Rainbow Text", &cheatManager.config->rainbowText);
 				ImGui::Checkbox("Quick Skin Change", &cheatManager.config->quickSkinChange);

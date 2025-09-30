@@ -56,6 +56,7 @@ __declspec(safebuffers) static void WINAPI DllAttach([[maybe_unused]] LPVOID lp)
 
 	cheatManager.config->init();
 	cheatManager.config->load();
+	cheatManager.gui->is_open = cheatManager.config->isOpen;
 	cheatManager.logger->addLog("CFG loaded!\n");
 	
 	cheatManager.hooks->install();
