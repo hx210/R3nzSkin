@@ -40,6 +40,7 @@ void Config::save() noexcept
 	config_json["heroName"] = this->heroName;
 	config_json["raibowText"] = this->rainbowText;
 	config_json["quickSkinChange"] = this->quickSkinChange;
+	config_json["isOpen"] = this->isOpen;
 	config_json["fontScale"] = this->fontScale;
 	config_json["current_combo_ward_index"] = this->current_combo_ward_index;
 	config_json["current_ward_skin_index"] = this->current_ward_skin_index;
@@ -80,6 +81,7 @@ void Config::load() noexcept
 	this->heroName = config_json.value("heroName", true);
 	this->rainbowText = config_json.value("raibowText", false);
 	this->quickSkinChange = config_json.value("quickSkinChange", false);
+	this->isOpen = config_json.value("isOpen", true);
 	this->fontScale = config_json.value("fontScale", 1.0f);
 	this->current_combo_ward_index = config_json.value("current_combo_ward_index", 0);
 	this->current_ward_skin_index = config_json.value("current_ward_skin_index", -1);
@@ -111,6 +113,7 @@ void Config::reset() noexcept
 	this->heroName = true;
 	this->rainbowText = true;
 	this->quickSkinChange = false;
+	this->isOpen = true;
 	this->fontScale = 1.0f;
 	this->current_combo_skin_index = 0;
 	this->current_combo_ward_index = 0;
