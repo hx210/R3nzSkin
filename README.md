@@ -6,11 +6,6 @@
 
 </div>
 
-> [!WARNING]
-> Riot Vanguard has updated its verification mechanism, which has affected the current user-mode injection method. Injection may only succeed once after system startup, and subsequent attempts may fail unless the computer is restarted.
->
-> If Riot Vanguard continues to change its verification logic in the future, this project may become further unusable. Continued compatibility or maintenance is not guaranteed.
-
 > [!IMPORTANT]
 > Please do not use Issues to post advertisements, promotions, or repeated recommendations of similar paid products. Whether those products work or not is unrelated to this project, but abusive language, spam, or repeatedly posting through alternate accounts will not be accepted.
 
